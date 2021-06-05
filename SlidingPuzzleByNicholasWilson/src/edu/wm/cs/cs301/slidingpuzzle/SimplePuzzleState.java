@@ -94,12 +94,94 @@ public class SimplePuzzleState implements PuzzleState {
 	@Override
 	public PuzzleState shuffleBoard(int pL) { //Changed variable name to not conflict with field
 		Set<PuzzleState> previousStates = new HashSet<PuzzleState>();
+		SimplePuzzleState curPuzzleState = this;
 		for(int k = 0; k < pL;) { //Do this (create a semi-random board one move away) pL number of times
-
-			k++;
+			//Find a position with an empty neighbor non-deterministically
+			Object[] eNL = getPosWithEmptyNeighborAndLegalMove(curPuzzleState); //Empty Neighbor Legal
+			int row = (int)eNL[0];
+			int col = (int)eNL[1];
+			Operation op = (Operation)eNL[2];
+			
+			//Move that position to its empty neighbor
+			curPuzzleState = (SimplePuzzleState)curPuzzleState.move(row, col, op);
+			
+			//If the new board isn't a duplicate, swap to it and add 1
+			if(!previousStates.contains(curPuzzleState)) {
+				k++;
+			}
+			else {
+				curPuzzleState = (SimplePuzzleState)curPuzzleState.getParent();
+			}
 			
 		}
-		return null;
+		return curPuzzleState;
+	}
+	/*Returns an array
+	 * emptyNeighborLegal[0] is a row number
+	 * emptyNeighborLegal[1] is a col number
+	 * emptyNeighborLegal[1] is a legal move
+	 */ 
+	private Object[] getPosWithEmptyNeighborAndLegalMove(SimplePuzzleState p) { //Non-deterministically get a value and a legal move
+		Object[] emptyNeighborLegal = new Object[3];
+		int startRow = (int)(Math.random() * dim);
+		int startCol = (int)(Math.random() * dim);	//Non determinism comes from random starting position
+		for(int r = startRow; r < dim; r++) {
+			for(int c = startCol; c < dim; c++) {
+				if(r > 0 && p.board[r - 1][c] == 0) { //If there are multiple legal moves, defaults to this order.
+					emptyNeighborLegal[0] = r; //Shouldn't cause infinite loops thanks to random starting position
+					emptyNeighborLegal[1] = c;
+					emptyNeighborLegal[2] = Operation.MOVEUP;
+					return emptyNeighborLegal;
+				}
+				if(r < dim - 1 && p.board[r + 1][c] == 0) {
+					emptyNeighborLegal[0] = r;
+					emptyNeighborLegal[1] = c;
+					emptyNeighborLegal[2] = Operation.MOVEDOWN;
+					return emptyNeighborLegal;
+				}
+				if(c > 0 && p.board[r][c - 1] == 0) {
+					emptyNeighborLegal[0] = r;
+					emptyNeighborLegal[1] = c;
+					emptyNeighborLegal[2] = Operation.MOVELEFT;
+					return emptyNeighborLegal;
+				}
+				if(c < dim - 1 && p.board[r][c + 1] == 0) {
+					emptyNeighborLegal[0] = r;
+					emptyNeighborLegal[1] = c;
+					emptyNeighborLegal[2] = Operation.MOVERIGHT;
+					return emptyNeighborLegal;
+				}
+			}
+		}
+		for(int r = 0; r < startRow; r++) {
+			for(int c = 0; c < startCol; c++) {
+				if(r > 0 && p.board[r - 1][c] == 0) {
+					emptyNeighborLegal[0] = r;
+					emptyNeighborLegal[1] = c;
+					emptyNeighborLegal[2] = Operation.MOVEUP;
+					return emptyNeighborLegal;
+				}
+				if(r < dim - 1 && p.board[r + 1][c] == 0) {
+					emptyNeighborLegal[0] = r;
+					emptyNeighborLegal[1] = c;
+					emptyNeighborLegal[2] = Operation.MOVEDOWN;
+					return emptyNeighborLegal;
+				}
+				if(c > 0 && p.board[r][c - 1] == 0) {
+					emptyNeighborLegal[0] = r;
+					emptyNeighborLegal[1] = c;
+					emptyNeighborLegal[2] = Operation.MOVELEFT;
+					return emptyNeighborLegal;
+				}
+				if(c < dim - 1 && p.board[r][c + 1] == 0) {
+					emptyNeighborLegal[0] = r;
+					emptyNeighborLegal[1] = c;
+					emptyNeighborLegal[2] = Operation.MOVERIGHT;
+					return emptyNeighborLegal;
+				}
+			}
+		}
+		return emptyNeighborLegal;
 	}
 
 	private Operation genRandomLegalOperation(int row, int col) { //Generates a semi-random, legal operation
