@@ -1,14 +1,10 @@
 package edu.wm.cs.cs301.slidingpuzzle;
 
-import static org.junit.Assert.assertFalse;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
-import java.util.function.IntPredicate;
 
 public class SimplePuzzleState implements PuzzleState {
 
@@ -108,7 +104,7 @@ public class SimplePuzzleState implements PuzzleState {
 		Set<PuzzleState> previousStates = new HashSet<PuzzleState>();
 		for(int k = 0; k < pL;) { //Do this (create a semi-random board one move away) pL number of times
 
-			
+			k++;
 			
 		}
 		return null;
@@ -158,8 +154,22 @@ public class SimplePuzzleState implements PuzzleState {
 		}
 		return legalOps;
 	}
+	@Override //Overriding the equals method
+	public boolean equals(Object o) { //Returns true if two puzzlestates have exactly the same board
+		if(o == null) {
+			return false;
+		}
+		if(this.getClass() != o.getClass())
+			return false;
+		SimplePuzzleState p = (SimplePuzzleState)o;
+		return Arrays.deepEquals(board, p.board);
+	}
 	
-	
+    @Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return super.hashCode();
+	} 
 	
 	@Override
 	public boolean isEmpty(int row, int column) {
