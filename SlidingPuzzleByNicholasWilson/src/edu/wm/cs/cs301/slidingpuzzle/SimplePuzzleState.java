@@ -1,10 +1,12 @@
 package edu.wm.cs.cs301.slidingpuzzle;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 
 public class SimplePuzzleState implements PuzzleState {
 
@@ -88,9 +90,98 @@ public class SimplePuzzleState implements PuzzleState {
 
 	@Override
 	public PuzzleState drag(int startRow, int startColumn, int endRow, int endColumn) {
+		//Return null when trying to move an empty square or to a non-empty square
+		if(board[startRow][startColumn] == 0 || board[endRow][endColumn] != 0) //
+			return null;
+		String tempBoard = strRepresentation(); //String representation to stop copy error; immutability is good
+		String myPath = recursivelyMakePath("", tempBoard, startRow * dim + startColumn, endRow * dim + endColumn); //Find a path from one state to the next
+		if(myPath == null) { //If there's no path, then return null
+			return null;
+		}
+		//If there is a path, follow it
+		int row = startRow; //These are temporary variables that will change with each move
+		int col = startColumn;
+		PuzzleState tempPuzzleState = this;
+		for(int i = 0; i < myPath.length(); i++) {
+			char direction = myPath.charAt(i);
+			if(direction == 'U') {
+				tempPuzzleState = tempPuzzleState.move(row, col, Operation.MOVEUP);
+				row = row - 1;
+			}
+			if(direction == 'D') {
+				tempPuzzleState = tempPuzzleState.move(row, col, Operation.MOVEDOWN);
+				row = row + 1;
+			}
+			if(direction == 'L') {
+				tempPuzzleState = tempPuzzleState.move(row, col, Operation.MOVELEFT);
+				col = col - 1;
+			}
+			if(direction == 'R') {
+				tempPuzzleState = tempPuzzleState.move(row, col, Operation.MOVERIGHT);
+				col = col + 1;
+			}
+		}
+		return tempPuzzleState;
+	}
+	
+	private String strRepresentation() {
+		String str = "";
+		for(int r = 0; r < dim; r++) {
+			for(int c = 0; c < dim; c++) {
+				if(board[r][c] == 0)
+					str += Integer.toString(board[r][c]);
+				else {
+					str += "*";
+				}
+			}
+		}
+		return str;
+	}
+/*
+ * Returns a string containing the correct path to get from one state to another
+ */
+	private String recursivelyMakePath(String path, String tempBoard, int pos, int goalPos) {
+		if(pos == goalPos) { //If I'm at my goal, return the path I used to get there
+			return path;
+		}
+		int row = pos / dim;
+		int col = pos % dim;
+	
+		if(row > 0 && tempBoard.charAt(pos - dim) == '0') { //If you can move up
+			String newBoard = tempBoard.substring(0, pos) + "*" + tempBoard.substring(pos + 1);
+			String newPath = path + "U";
+			String result = recursivelyMakePath(newPath, newBoard, pos - dim, goalPos);
+			if(result != null) {
+				return result;
+			}
+		}
+		if(col > 0 && tempBoard.charAt(pos - 1) == '0') { //If you can move left
+			String newBoard = tempBoard.substring(0, pos) + "*" + tempBoard.substring(pos + 1);
+			String newPath = path + "L";
+			String result = recursivelyMakePath(newPath, newBoard, pos - 1, goalPos);
+			if(result != null) {
+				return result;
+			}
+		}
+		if(row < dim - 1 && tempBoard.charAt(pos + dim) == '0') { //If you can move down
+			String newBoard = tempBoard.substring(0, pos) + "*" + tempBoard.substring(pos + 1);
+			String newPath = path + "D";
+			String result = recursivelyMakePath(newPath, newBoard, pos + dim, goalPos);
+			if(result != null) {
+				return result;
+			}
+		}
+		if(col < dim - 1 && tempBoard.charAt(pos + 1) == '0') { //If you can move right
+			String newBoard = tempBoard.substring(0, pos) + "*" + tempBoard.substring(pos + 1);
+			String newPath = path + "R";
+			String result = recursivelyMakePath(newPath, newBoard, pos + 1, goalPos);
+			if(result != null) {
+				return result;
+			}
+		}
 		return null;
 	}
-
+	
 	@Override
 	public PuzzleState shuffleBoard(int pL) { //Changed variable name to not conflict with field
 		Set<PuzzleState> previousStates = new HashSet<PuzzleState>();
