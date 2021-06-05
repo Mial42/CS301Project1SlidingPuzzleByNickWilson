@@ -344,7 +344,7 @@ public class SimplePuzzleState implements PuzzleState {
 
 	@Override
 	public PuzzleState getStateWithShortestPath() {
-		return null;
+		return this;
 	}
 	
 	private boolean isMovePossible(int row, int col, Operation op) { //Tells you if the move is possible
