@@ -1,5 +1,15 @@
 package edu.wm.cs.cs301.slidingpuzzle;
 
+import static org.junit.Assert.assertFalse;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.function.IntPredicate;
+
 public class SimplePuzzleState implements PuzzleState {
 
 	private PuzzleState parent;
@@ -93,11 +103,64 @@ public class SimplePuzzleState implements PuzzleState {
 	}
 
 	@Override
-	public PuzzleState shuffleBoard(int pathLength) {
+	public PuzzleState shuffleBoard(int pL) { //Changed variable name to not conflict with field
 		// TODO Auto-generated method stub
+		Set<PuzzleState> previousStates = new HashSet<PuzzleState>();
+		for(int k = 0; k < pL;) { //Do this (create a semi-random board one move away) pL number of times
+
+			
+			
+		}
 		return null;
 	}
 
+	private Operation genRandomLegalOperation(int row, int col) { //Generates a semi-random, legal operation
+		boolean[] legalOps = legalOperations(row, col);
+		List<Integer> randomInts1to4 = Arrays.asList(1, 2, 3, 4);
+		Collections.shuffle(randomInts1to4);
+		//Return null if there are no legal moves
+		
+		for(int i = 0; i < 3; i++) {
+			int r = randomInts1to4.get(i);//Random Int from 1 to 4 
+			if(legalOps[r] == true && r == 0) {
+				return Operation.MOVEUP; //Once you hit a legal move, return it
+			}
+			else if(legalOps[r] == true && r == 1) {
+				return Operation.MOVEDOWN;
+			}
+			else if(legalOps[r] == true && r == 2) {
+				return Operation.MOVELEFT;
+			}
+			else if(legalOps[r] == true && r == 3) {
+				return Operation.MOVERIGHT;
+			}
+		}
+		return null;
+	}
+	//Returns an array of booleans corresponding to legalOperations
+	//legalOps[0] = true means you can move up
+	//legalOps[1] = true means you can move down
+	//legalOps[2] = true means you can move left
+	//legalOps[3] = true means you can move right
+	private boolean[] legalOperations(int row, int col) {
+		boolean[] legalOps = {false, false, false, false};
+		if(row != 0 && isEmpty(row - 1, col)) {
+			legalOps[0] = true;
+		}
+		if(row != dim - 1 && isEmpty(row + 1, col)) {
+			legalOps[1] = true;
+		}
+		if(col != 0 && isEmpty(row, col - 1)) {
+			legalOps[2] = true;
+		}
+		if(col != dim - 1 && isEmpty(row, col + 1)) {
+			legalOps[3] = true;
+		}
+		return legalOps;
+	}
+	
+	
+	
 	@Override
 	public boolean isEmpty(int row, int column) {
 		// TODO Auto-generated method stub
