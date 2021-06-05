@@ -78,16 +78,17 @@ public class SimplePuzzleState implements PuzzleState {
 			switch(op) {
 				case MOVELEFT: //In each operation:
 					newBoard = swap(row, column, row, column - 1); //Create a new board with the values swapped
+					return new SimplePuzzleState(this, newBoard, op, pathLength + 1, dim); //Create and return a new SimplePuzzleState
 				case MOVERIGHT:
 					newBoard = swap(row, column, row, column + 1);
+					return new SimplePuzzleState(this, newBoard, op, pathLength + 1, dim); //Create and return a new SimplePuzzleState
 				case MOVEUP:
 					newBoard = swap(row, column, row - 1, column);
+					return new SimplePuzzleState(this, newBoard, op, pathLength + 1, dim); //Create and return a new SimplePuzzleState
 				case MOVEDOWN:
 					newBoard = swap(row, column, row + 1, column);
-				default:
-					newBoard = board;
+					return new SimplePuzzleState(this, newBoard, op, pathLength + 1, dim); //Create and return a new SimplePuzzleState
 			}
-			return new SimplePuzzleState(this, newBoard, op, pathLength + 1, dim); //Create and return a new SimplePuzzleState
 		}
 		return null;
 	}
@@ -100,7 +101,6 @@ public class SimplePuzzleState implements PuzzleState {
 
 	@Override
 	public PuzzleState shuffleBoard(int pL) { //Changed variable name to not conflict with field
-		// TODO Auto-generated method stub
 		Set<PuzzleState> previousStates = new HashSet<PuzzleState>();
 		for(int k = 0; k < pL;) { //Do this (create a semi-random board one move away) pL number of times
 
@@ -112,7 +112,7 @@ public class SimplePuzzleState implements PuzzleState {
 
 	private Operation genRandomLegalOperation(int row, int col) { //Generates a semi-random, legal operation
 		boolean[] legalOps = legalOperations(row, col);
-		List<Integer> randomInts1to4 = Arrays.asList(1, 2, 3, 4);
+		List<Integer> randomInts1to4 = Arrays.asList(1, 2, 3, 4); //Hardcoded TODO fix this
 		Collections.shuffle(randomInts1to4);
 		//Return null if there are no legal moves
 		
@@ -211,7 +211,11 @@ public class SimplePuzzleState implements PuzzleState {
 	}
 	
 	private int[][] swap(int r1, int c1, int r2, int c2){ //Swaps two values and returns a new array with the values swapped
-		int[][] newBoard = board.clone();
+		int[][] newBoard = new int[dim][dim];
+		for(int r = 0; r < dim; r++) {
+			newBoard[r] = board[r].clone();
+		}
+		
 		int val1 = newBoard[r1][c1];
 		newBoard[r1][c1] = newBoard[r2][c2];
 		newBoard[r2][c2]= val1; 
