@@ -4,10 +4,25 @@ public class SimplePuzzleState implements PuzzleState {
 
 	private PuzzleState parent;
 	private int[][] board;
+	private Operation operation;
+	private int pathLength;
+	
+	public SimplePuzzleState() {
+		
+	}
+	
+	private SimplePuzzleState(PuzzleState p, int[][] b, Operation op, int pL) {//Private Constructor that lets you create a new SimplePuzzleState with set fields
+		// TODO Auto-generated constructor stub
+		parent = p;
+		board = b;
+		operation = op;
+		pathLength = pL;
+	}
 	
 	@Override
 	public void setToInitialState(int dimension, int numberOfEmptySlots) {
 		// TODO Auto-generated method stub
+		pathLength = 0;
 		board = new int[dimension][dimension];
 		for(int row = 0; row < dimension; row++) {
 			for(int col = 0; col < dimension; col++) {
@@ -31,19 +46,19 @@ public class SimplePuzzleState implements PuzzleState {
 	@Override
 	public PuzzleState getParent() {
 		// TODO Auto-generated method stub
-		return null;
+		return parent;
 	}
 
 	@Override
 	public Operation getOperation() {
 		// TODO Auto-generated method stub
-		return null;
+		return operation;
 	}
 
 	@Override
 	public int getPathLength() {
 		// TODO Auto-generated method stub
-		return 0;
+		return pathLength;
 	}
 
 	@Override
