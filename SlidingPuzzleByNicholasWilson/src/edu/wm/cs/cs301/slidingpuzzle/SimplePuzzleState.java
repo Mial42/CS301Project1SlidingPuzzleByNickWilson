@@ -94,6 +94,7 @@ public class SimplePuzzleState implements PuzzleState {
 	@Override
 	public PuzzleState shuffleBoard(int pL) { //Changed variable name to not conflict with field
 		Set<PuzzleState> previousStates = new HashSet<PuzzleState>();
+		previousStates.add(this);
 		SimplePuzzleState curPuzzleState = this;
 		for(int k = 0; k < pL;) { //Do this (create a semi-random board one move away) pL number of times
 			//Find a position with an empty neighbor non-deterministically
