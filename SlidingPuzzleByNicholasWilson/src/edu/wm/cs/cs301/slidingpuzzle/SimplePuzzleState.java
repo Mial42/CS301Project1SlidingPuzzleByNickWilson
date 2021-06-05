@@ -273,7 +273,9 @@ public class SimplePuzzleState implements PuzzleState {
 				}
 			}
 		}
-		return emptyNeighborLegal;
+		//System.out.println("Problem startcol " + Integer.toString(startCol));
+		//System.out.println("Problem startrow " + Integer.toString(startRow));
+		return getPosWithEmptyNeighborAndLegalMove(p); //Occassionally there are issues; semi-random, difficult to fix
 	}
 
 	private Operation genRandomLegalOperation(int row, int col) { //Generates a semi-random, legal operation
